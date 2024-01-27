@@ -57,6 +57,11 @@ func main() {
 	for _, product := range products {
 		fmt.Printf("id=%v\nname=%v\nprice=%v\n", product.ID, product.Name, product.Price)
 	}
+
+	deleteError := deleteProduct(database, product.ID)
+	if deleteError != nil {
+		panic(deleteError)
+	}
 }
 
 func insertProduct(db *sql.DB, product *Product) error {
@@ -131,4 +136,21 @@ func selectAllProducts(db *sql.DB) ([]*Product, error) {
 	}
 
 	return products, nil
+}
+
+func deleteProduct(db *sql.DB, id string) error {
+	//`Prepare` method voiding sql injection
+	stmt, stmtError := db.Prepare("delete from products where id = ?")
+	if stmtError != nil {
+		return stmtError
+	}
+	defer stmt.Close()
+
+	//replace variables in stmt for values
+	_, insertError := stmt.Exec(id)
+	if insertError != nil {
+		return insertError
+	}
+
+	return nil
 }
