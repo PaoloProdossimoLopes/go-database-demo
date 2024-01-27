@@ -7,6 +7,7 @@ func selectAllProducts(db *sql.DB) ([]*Product, error) {
 	// tem a nescessidade de previnir "SQL Injection" com o uso do metodo "Prepare"
 	// podendo assim fazer a chama direta
 	rows, rowsError := db.Query("select id, name, price from products")
+	//db.QueryRowContext(context, queryString) // can use to limit the time of query spend
 	if rowsError != nil {
 		return nil, rowsError
 	}
